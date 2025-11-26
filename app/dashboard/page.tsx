@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardListingCard from '@/components/DashboardListingCard'
@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguage } from '@/contexts/LanguageContext'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const supabase = createClient()
@@ -96,7 +96,7 @@ export default function DashboardPage() {
     return () => {
       clearTimeout(timeoutId)
     }
-  }, [user, authLoading, supabase, searchParams, router])
+  }, [user, authLoading, supabase, searchParams, router, t])
 
   // Function สำหรับ refresh listings (ไม่ refresh profile)
   const refreshListings = useCallback(async () => {
@@ -137,7 +137,7 @@ export default function DashboardPage() {
       console.error('Error refreshing listings:', err)
       setError(t('dashboard.error'))
     }
-  }, [user, supabase, searchParams])
+  }, [user, supabase, searchParams, t])
 
   const totalViews = listings.reduce((sum, listing) => sum + (listing.views || 0), 0)
   const featuredCount = listings.filter(l => l.is_featured).length
@@ -294,5 +294,20 @@ export default function DashboardPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col items-center justify-center h-64">
+          <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600">กำลังโหลด...</p>
+        </div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   )
 }

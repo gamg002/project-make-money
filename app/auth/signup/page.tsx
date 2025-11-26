@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -8,7 +8,7 @@ import { UserPlus, Mail, Lock, User } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguage } from '@/contexts/LanguageContext'
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -46,7 +46,7 @@ export default function SignUpPage() {
 
       return () => clearTimeout(timeoutId)
     }
-  }, [isVerifying, profile])
+  }, [isVerifying, profile, t])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -250,6 +250,18 @@ export default function SignUpPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <SignUpForm />
+    </Suspense>
   )
 }
 

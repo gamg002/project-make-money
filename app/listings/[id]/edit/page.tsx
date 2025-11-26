@@ -60,7 +60,7 @@ export default function EditListingPage({
     }
 
     fetchListing()
-  }, [user, authLoading, params.id, router, supabase])
+  }, [user, authLoading, params.id, router, supabase, t])
 
   if (authLoading || loading) {
     return (
