@@ -49,8 +49,8 @@ export default function ListingCard({ listing }: ListingCardProps) {
 
   return (
     <Link href={`/listings/${listing.id}`}>
-      <div className="bg-white rounded-2xl shadow-soft overflow-hidden hover-lift cursor-pointer border border-purple-50 group">
-        <div className="relative h-56 w-full bg-gradient-to-br from-purple-100 to-purple-50 overflow-hidden">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-soft overflow-hidden hover-lift cursor-pointer border border-purple-50 group">
+        <div className="relative h-48 sm:h-56 w-full bg-gradient-to-br from-purple-100 to-purple-50 overflow-hidden">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -81,48 +81,48 @@ export default function ListingCard({ listing }: ListingCardProps) {
           )}
         </div>
         
-        <div className="p-5">
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="font-bold text-gray-900 line-clamp-2 flex-1 text-lg group-hover:text-primary-700 transition-colors">
+        <div className="p-4 sm:p-5">
+          <div className="flex items-start justify-between mb-2 sm:mb-3">
+            <h3 className="font-bold text-gray-900 line-clamp-2 flex-1 text-base sm:text-lg group-hover:text-primary-700 transition-colors">
               {listing.title}
             </h3>
           </div>
 
-          <div className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-3">
+          <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2 sm:mb-3">
             {formatPrice(listing.price)} {t('listing.baht')}
-            {listing.transaction_type === 'rent' && <span className="text-base font-normal text-gray-500">{t('listing.perMonth')}</span>}
+            {listing.transaction_type === 'rent' && <span className="text-sm sm:text-base font-normal text-gray-500">{t('listing.perMonth')}</span>}
           </div>
 
-          <div className="flex items-center text-gray-600 text-sm mb-3">
-            <MapPin className="w-4 h-4 mr-1.5 text-primary-500" />
+          <div className="flex items-center text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3">
+            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-primary-500 flex-shrink-0" />
             <span className="line-clamp-1">
               {listing.district}, {listing.province}
             </span>
           </div>
 
-          <div className="flex items-center space-x-5 text-gray-600 text-sm mb-4">
+          <div className="flex items-center flex-wrap gap-2 sm:gap-3 sm:space-x-5 text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">
             {listing.bedrooms && (
-              <div className="flex items-center bg-purple-50 px-3 py-1.5 rounded-lg">
-                <Bed className="w-4 h-4 mr-1.5 text-primary-600" />
-                <span className="font-medium">{listing.bedrooms}</span>
+              <div className="flex items-center bg-purple-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg">
+                <Bed className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-primary-600 flex-shrink-0" />
+                <span className="font-medium text-xs sm:text-sm">{listing.bedrooms}</span>
               </div>
             )}
             {listing.bathrooms && (
-              <div className="flex items-center bg-purple-50 px-3 py-1.5 rounded-lg">
-                <Bath className="w-4 h-4 mr-1.5 text-primary-600" />
-                <span className="font-medium">{listing.bathrooms}</span>
+              <div className="flex items-center bg-purple-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg">
+                <Bath className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-primary-600 flex-shrink-0" />
+                <span className="font-medium text-xs sm:text-sm">{listing.bathrooms}</span>
               </div>
             )}
             {listing.area_sqm && (
-              <div className="flex items-center bg-purple-50 px-3 py-1.5 rounded-lg">
-                <Square className="w-4 h-4 mr-1.5 text-primary-600" />
-                <span className="font-medium">{listing.area_sqm} {t('listing.sqm')}</span>
+              <div className="flex items-center bg-purple-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg">
+                <Square className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 text-primary-600 flex-shrink-0" />
+                <span className="font-medium text-xs sm:text-sm">{listing.area_sqm} {t('listing.sqm')}</span>
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-purple-100">
-            <span className="text-xs font-medium text-primary-700 bg-purple-50 px-3 py-1 rounded-full">
+          <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-purple-100">
+            <span className="text-xs font-medium text-primary-700 bg-purple-50 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
               {getPropertyTypeLabel(listing.property_type)}
             </span>
             <span className="text-xs text-gray-500">

@@ -51,16 +51,16 @@ export default function ImageGallery({ images, initialIndex = 0, onClose }: Imag
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center"
+      className="fixed inset-0 z-50 bg-black bg-opacity-95 flex flex-col items-center justify-center"
       onClick={onClose}
     >
       {/* Close Button */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 z-10 text-white hover:text-gray-300 transition-colors p-2"
+        className="absolute top-2 sm:top-4 right-2 sm:right-4 z-20 text-white hover:text-gray-300 transition-colors p-2 sm:p-3 bg-black bg-opacity-50 rounded-full backdrop-blur-sm"
         aria-label="ปิด"
       >
-        <X className="w-8 h-8" />
+        <X className="w-6 h-6 sm:w-8 sm:h-8" />
       </button>
 
       {/* Previous Button */}
@@ -70,19 +70,19 @@ export default function ImageGallery({ images, initialIndex = 0, onClose }: Imag
             e.stopPropagation()
             handlePrevious()
           }}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors p-2 bg-black bg-opacity-50 rounded-full"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 text-white hover:text-gray-300 transition-colors p-2 sm:p-3 bg-black bg-opacity-50 rounded-full backdrop-blur-sm"
           aria-label="รูปก่อนหน้า"
         >
-          <ChevronLeft className="w-8 h-8" />
+          <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8" />
         </button>
       )}
 
-      {/* Image Container */}
+      {/* Image Container - ปรับให้มีพื้นที่สำหรับ thumbnail */}
       <div
-        className="relative w-full h-full flex items-center justify-center p-4"
+        className="relative w-full flex-1 flex items-center justify-center p-2 sm:p-4 pb-20 sm:pb-24 md:pb-28"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative w-full h-full max-w-7xl max-h-[90vh]">
+        <div className="relative w-full h-full max-w-7xl max-h-full">
           <Image
             src={currentImage}
             alt={`Image ${currentIndex + 1} of ${images.length}`}
@@ -101,45 +101,47 @@ export default function ImageGallery({ images, initialIndex = 0, onClose }: Imag
             e.stopPropagation()
             handleNext()
           }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors p-2 bg-black bg-opacity-50 rounded-full"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 text-white hover:text-gray-300 transition-colors p-2 sm:p-3 bg-black bg-opacity-50 rounded-full backdrop-blur-sm"
           aria-label="รูปถัดไป"
         >
-          <ChevronRight className="w-8 h-8" />
+          <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8" />
         </button>
       )}
 
-      {/* Image Counter */}
+      {/* Image Counter - ย้ายไปด้านบน */}
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-white bg-black bg-opacity-50 px-4 py-2 rounded-full text-sm">
+        <div className="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 z-20 text-white bg-black bg-opacity-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm">
           {currentIndex + 1} / {images.length}
         </div>
       )}
 
-      {/* Thumbnail Strip */}
+      {/* Thumbnail Strip - อยู่ด้านล่างสุด ไม่บังรูป */}
       {images.length > 1 && (
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex gap-2 max-w-4xl overflow-x-auto px-4 pb-2">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={(e) => {
-                e.stopPropagation()
-                setCurrentIndex(index)
-              }}
-              className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
-                index === currentIndex
-                  ? 'border-white scale-110'
-                  : 'border-transparent opacity-60 hover:opacity-100'
-              }`}
-            >
-              <Image
-                src={image}
-                alt={`Thumbnail ${index + 1}`}
-                fill
-                className="object-cover"
-                sizes="80px"
-              />
-            </button>
-          ))}
+        <div className="absolute bottom-0 left-0 right-0 z-20 bg-black bg-opacity-60 backdrop-blur-sm py-2 sm:py-3 px-2 sm:px-4">
+          <div className="flex gap-1.5 sm:gap-2 justify-center max-w-full overflow-x-auto scrollbar-thin scrollbar-thumb-white scrollbar-track-transparent pb-1">
+            {images.map((image, index) => (
+              <button
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setCurrentIndex(index)
+                }}
+                className={`relative flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                  index === currentIndex
+                    ? 'border-white scale-110 shadow-lg'
+                    : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'
+                }`}
+              >
+                <Image
+                  src={image}
+                  alt={`Thumbnail ${index + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 48px, (max-width: 768px) 64px, 80px"
+                />
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

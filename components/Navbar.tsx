@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Home, Plus, User, LogOut, LogIn, UserPlus, ChevronDown, Globe } from 'lucide-react'
+import { Home, Plus, User, LogOut, LogIn, UserPlus, ChevronDown, Globe, Menu, X } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { AlertDialog } from '@/components/Modal'
@@ -16,6 +16,7 @@ export default function Navbar() {
   const supabase = createClient()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showLanguageMenu, setShowLanguageMenu] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [showError, setShowError] = useState(false)
   const [hasShownError, setHasShownError] = useState(false)
   const profileRef = useRef(profile)
@@ -100,17 +101,18 @@ export default function Navbar() {
   return (
     <nav className="bg-white/95 backdrop-blur-md shadow-soft border-b border-purple-100 sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="p-2 rounded-xl gradient-purple shadow-glow group-hover:shadow-glow-lg transition-all duration-300">
-              <Home className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between h-16 md:h-20">
+          <Link href="/" className="flex items-center space-x-2 md:space-x-3 group">
+            <div className="p-1.5 md:p-2 rounded-xl gradient-purple shadow-glow group-hover:shadow-glow-lg transition-all duration-300">
+              <Home className="w-4 h-4 md:w-5 md:h-5 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+            <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
               RealEstate
             </span>
           </Link>
 
-          <div className="flex items-center space-x-6">
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             <Link
               href="/"
               className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200 relative group"
@@ -181,13 +183,14 @@ export default function Navbar() {
               <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
             ) : user ? (
               <>
-                <Link
-                  href="/listings/new"
-                  className="flex items-center space-x-2 gradient-purple text-white px-6 py-2.5 rounded-xl hover:shadow-glow transition-all duration-300 hover-lift font-medium"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>{t('nav.newListing')}</span>
-                </Link>
+            <Link
+              href="/listings/new"
+              className="flex items-center space-x-2 gradient-purple text-white px-4 xl:px-6 py-2 xl:py-2.5 rounded-xl hover:shadow-glow transition-all duration-300 hover-lift font-medium text-sm xl:text-base"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden xl:inline">{t('nav.newListing')}</span>
+              <span className="xl:hidden">{t('nav.new')}</span>
+            </Link>
                 
                 {/* User Menu - แสดงเฉพาะเมื่อมี profile */}
                 {displayName ? (
@@ -272,7 +275,174 @@ export default function Navbar() {
               </>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="lg:hidden p-2 rounded-lg hover:bg-purple-50 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {showMobileMenu ? (
+              <X className="w-6 h-6 text-gray-700" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-700" />
+            )}
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="lg:hidden border-t border-purple-100 py-4 animate-fade-in">
+            <div className="flex flex-col space-y-4">
+              <Link
+                href="/"
+                className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200 px-2 py-2"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                {t('nav.home')}
+              </Link>
+
+              {/* Language Selector Mobile */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setShowLanguageMenu(!showLanguageMenu)
+                    setShowUserMenu(false)
+                  }}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 font-medium px-2 py-2 rounded-xl hover:bg-purple-50 transition-all duration-200 w-full text-left"
+                >
+                  <Globe className="w-4 h-4" />
+                  <span>{language === 'th' ? 'ไทย' : 'English'}</span>
+                  <ChevronDown className="w-4 h-4 ml-auto" />
+                </button>
+
+                {showLanguageMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-30"
+                      onClick={() => setShowLanguageMenu(false)}
+                    />
+                    <div className="mt-2 w-full bg-white rounded-xl shadow-soft border border-purple-100 z-40 overflow-hidden animate-fade-in">
+                      <div className="py-2">
+                        <button
+                          onClick={() => {
+                            setLanguage('th')
+                            setShowLanguageMenu(false)
+                          }}
+                          className={`w-full text-left px-4 py-3 text-sm flex items-center space-x-3 transition-all duration-200 ${
+                            language === 'th' 
+                              ? 'bg-gradient-to-r from-primary-50 to-purple-50 text-primary-700 font-semibold' 
+                              : 'text-gray-700 hover:bg-purple-50'
+                          }`}
+                        >
+                          <span className="text-lg">🇹🇭</span>
+                          <span>{t('nav.language.th')}</span>
+                          {language === 'th' && <span className="ml-auto text-primary-600">✓</span>}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setLanguage('en')
+                            setShowLanguageMenu(false)
+                          }}
+                          className={`w-full text-left px-4 py-3 text-sm flex items-center space-x-3 transition-all duration-200 ${
+                            language === 'en' 
+                              ? 'bg-gradient-to-r from-primary-50 to-purple-50 text-primary-700 font-semibold' 
+                              : 'text-gray-700 hover:bg-purple-50'
+                          }`}
+                        >
+                          <span className="text-lg">🇬🇧</span>
+                          <span>{t('nav.language.en')}</span>
+                          {language === 'en' && <span className="ml-auto text-primary-600">✓</span>}
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {loading ? (
+                <div className="flex justify-center py-4">
+                  <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : user ? (
+                <>
+                  <Link
+                    href="/listings/new"
+                    className="flex items-center space-x-2 gradient-purple text-white px-4 py-2.5 rounded-xl hover:shadow-glow transition-all duration-300 hover-lift font-medium"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>{t('nav.newListing')}</span>
+                  </Link>
+
+                  {displayName ? (
+                    <>
+                      <div className="px-2 py-2 border-t border-purple-100 pt-4">
+                        <div className="flex items-center space-x-3 mb-4">
+                          <div className="w-10 h-10 gradient-purple rounded-full flex items-center justify-center text-white font-semibold shadow-glow">
+                            {displayName.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-gray-700 font-medium">
+                            {displayName}
+                          </span>
+                        </div>
+                        <Link
+                          href="/dashboard"
+                          className="block px-2 py-2 text-gray-700 hover:text-primary-600 hover:bg-purple-50 rounded-lg transition-colors duration-200 flex items-center space-x-2"
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <User className="w-4 h-4 text-primary-600" />
+                          <span>{t('nav.dashboard')}</span>
+                        </Link>
+                        <Link
+                          href="/settings"
+                          className="block px-2 py-2 text-gray-700 hover:text-primary-600 hover:bg-purple-50 rounded-lg transition-colors duration-200 flex items-center space-x-2"
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <User className="w-4 h-4 text-primary-600" />
+                          <span>{t('nav.settings')}</span>
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setShowMobileMenu(false)
+                            signOut()
+                          }}
+                          className="w-full text-left px-2 py-2 text-red-600 hover:bg-red-50 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>{t('nav.signOut')}</span>
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-center py-4">
+                      <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/signin"
+                    className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200 px-2 py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <LogIn className="w-5 h-5" />
+                    <span>{t('nav.signIn')}</span>
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="flex items-center space-x-2 gradient-purple text-white px-4 py-2.5 rounded-xl hover:shadow-glow transition-all duration-300 hover-lift font-medium"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    <span>{t('nav.signUp')}</span>
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Error Dialog - แสดงเมื่อมี user แต่ไม่มี profile */}

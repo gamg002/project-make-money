@@ -49,9 +49,9 @@ export default function SearchFilters() {
   }
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-soft mb-8 border border-purple-100 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="lg:col-span-2">
+    <div className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-soft mb-6 sm:mb-8 border border-purple-100 animate-fade-in">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="sm:col-span-2 lg:col-span-2">
           <div className="relative group">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-400 w-5 h-5 group-focus-within:text-primary-600 transition-colors duration-200" />
             <input
@@ -128,17 +128,17 @@ export default function SearchFilters() {
         />
       </div>
 
-      <div className="flex items-center space-x-3 mt-6">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mt-4 sm:mt-6">
         <button
           onClick={handleSearch}
-          className="gradient-purple text-white px-8 py-3 rounded-xl hover:shadow-glow transition-all duration-300 hover-lift font-semibold flex items-center space-x-2 group"
+          className="gradient-purple text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl hover:shadow-glow transition-all duration-300 hover-lift font-semibold flex items-center justify-center space-x-2 group"
         >
           <Search className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
           <span>{t('search.search')}</span>
         </button>
         <button
           onClick={handleReset}
-          className="flex items-center space-x-2 text-gray-600 hover:text-primary-700 px-6 py-3 rounded-xl border-2 border-purple-200 hover:border-primary-300 transition-all duration-200 font-medium hover:bg-purple-50"
+          className="flex items-center justify-center space-x-2 text-gray-600 hover:text-primary-700 px-6 py-2.5 sm:py-3 rounded-xl border-2 border-purple-200 hover:border-primary-300 transition-all duration-200 font-medium hover:bg-purple-50"
         >
           <X className="w-4 h-4" />
           <span>{t('search.reset')}</span>

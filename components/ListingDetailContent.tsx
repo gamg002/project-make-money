@@ -48,11 +48,11 @@ export default function ListingDetailContent({ listing, isOwner }: ListingDetail
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 md:py-8 max-w-6xl">
+      <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
         <Link
           href="/"
-          className="flex items-center text-primary-600 hover:text-primary-700 font-medium"
+          className="flex items-center text-primary-600 hover:text-primary-700 font-medium text-sm sm:text-base"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t('detail.backToHome')}
@@ -65,40 +65,40 @@ export default function ListingDetailContent({ listing, isOwner }: ListingDetail
         <BannerAd adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BANNER} />
       )}
 
-      <div className="bg-white rounded-2xl shadow-soft overflow-hidden border border-purple-100">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-soft overflow-hidden border border-purple-100">
         {/* รูปภาพ Gallery */}
         <ListingImageGallery 
           images={listing.images || []} 
           title={listing.title}
         />
 
-        <div className="p-8">
+        <div className="p-4 sm:p-6 md:p-8">
           {/* หัวข้อและราคา */}
-          <div className="mb-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 sm:mb-4 gap-3 sm:gap-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 break-words">
                   {listing.title}
                 </h1>
-                <div className="flex items-center text-gray-600 mb-4">
-                  <MapPin className="w-5 h-5 mr-2" />
-                  <span>
+                <div className="flex items-start text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-2 mt-0.5 flex-shrink-0" />
+                  <span className="break-words">
                     {listing.address}, {listing.district}, {listing.province}
                     {listing.postal_code && ` ${listing.postal_code}`}
                   </span>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-4xl font-bold text-primary-600 mb-1">
+              <div className="text-left sm:text-right flex-shrink-0">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-600 mb-1">
                   {formatPrice(listing.price)} {t('detail.price')}
                 </div>
                 {listing.transaction_type === 'rent' && (
-                  <span className="text-gray-500">{t('detail.perMonth')}</span>
+                  <span className="text-sm sm:text-base text-gray-500">{t('detail.perMonth')}</span>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 flex-wrap">
+            <div className="flex items-center flex-wrap gap-2 sm:gap-3 md:gap-4">
               <span className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm font-medium">
                 {getTransactionTypeLabel(listing.transaction_type || '')}
               </span>
@@ -115,14 +115,14 @@ export default function ListingDetailContent({ listing, isOwner }: ListingDetail
           </div>
 
           {/* รายละเอียด */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
             <div className="md:col-span-2">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3 sm:mb-4">
                 {t('detail.description')}
               </h2>
               {listing.description ? (
                 <>
-                  <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+                  <p className="text-gray-700 whitespace-pre-line leading-relaxed text-sm sm:text-base">
                     {listing.description}
                   </p>
                   {/* In-Article Ad */}
@@ -131,14 +131,14 @@ export default function ListingDetailContent({ listing, isOwner }: ListingDetail
                   )}
                 </>
               ) : (
-                <p className="text-gray-500">{t('detail.noDescription')}</p>
+                <p className="text-gray-500 text-sm sm:text-base">{t('detail.noDescription')}</p>
               )}
 
-              <div className="mt-8">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="mt-6 sm:mt-8">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
                   {t('detail.features')}
                 </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                   {listing.bedrooms && (
                     <div className="flex items-center space-x-2">
                       <Bed className="w-5 h-5 text-gray-400" />
@@ -171,18 +171,18 @@ export default function ListingDetailContent({ listing, isOwner }: ListingDetail
             </div>
 
             {/* ข้อมูลติดต่อ */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Sidebar Ad - Top */}
               {process.env.NEXT_PUBLIC_ADSENSE_SLOT_SIDEBAR && (
                 <SidebarAd adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_SIDEBAR} />
               )}
               
-              <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl p-6 h-fit border border-purple-100 shadow-soft">
-                <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center">
-                  <span className="w-1 h-6 gradient-purple rounded-full mr-3"></span>
+              <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl p-4 sm:p-6 h-fit border border-purple-100 shadow-soft sticky top-20">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 flex items-center">
+                  <span className="w-1 h-5 sm:h-6 gradient-purple rounded-full mr-2 sm:mr-3"></span>
                   {t('detail.contact')}
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div>
                     <div className="text-sm text-gray-500 mb-1">{t('detail.name')}</div>
                     <div className="font-medium text-gray-900">

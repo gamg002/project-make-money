@@ -7,19 +7,19 @@ export default function Footer() {
   const { t } = useLanguage()
   
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white mt-20">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+    <footer className="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white mt-12 sm:mt-20">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div>
-            <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
               {t('footer.about')}
             </h3>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
               {t('footer.aboutDesc')}
             </p>
           </div>
           <div>
-            <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
               {t('footer.quickLinks')}
             </h3>
             <ul className="space-y-3 text-gray-300">
@@ -37,14 +37,14 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
               {t('footer.contact')}
             </h3>
-            <p className="text-gray-400 text-sm mb-4 italic">
+            <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 italic">
               {t('footer.contactAds')}
             </p>
-            <div className="space-y-3 text-gray-300">
+            <div className="space-y-2 sm:space-y-3 text-gray-300 text-sm sm:text-base">
               <a 
                 href="mailto:gamg002@gmail.com" 
                 className="flex items-center hover:text-purple-300 transition-colors duration-200 group"
@@ -71,8 +71,8 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-t border-purple-800/50 mt-8 pt-8 text-center">
-          <p className="text-gray-400">&copy; 2024 RealEstate. {t('footer.copyright')}.</p>
+        <div className="border-t border-purple-800/50 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center">
+          <p className="text-gray-400 text-xs sm:text-sm">&copy; 2024 RealEstate. {t('footer.copyright')}.</p>
         </div>
       </div>
     </footer>

@@ -38,7 +38,7 @@ export default function HomePageContent({
   const { t } = useLanguage()
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {error && (
         <div className="bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 p-6 mb-6 rounded-lg shadow-md">
           <div className="flex items-start">
@@ -101,7 +101,7 @@ export default function HomePageContent({
             <BannerAd adSlot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_BANNER} />
           )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {listings.map((listing, index) => (
               <div key={listing.id}>
                 <ListingCard listing={listing} />
@@ -122,7 +122,7 @@ export default function HomePageContent({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-2 mt-8">
+            <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-2 mt-6 sm:mt-8">
               <Link
                 href={`?${new URLSearchParams({
                   ...Object.fromEntries(
@@ -130,7 +130,7 @@ export default function HomePageContent({
                   ),
                   page: String(Math.max(1, page - 1)),
                 })}`}
-                className={`px-4 py-2 rounded-lg border ${
+                className={`px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base ${
                   page === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none'
                     : 'bg-white text-gray-700 hover:bg-gray-50'
@@ -160,7 +160,7 @@ export default function HomePageContent({
                       ),
                       page: String(pageNum),
                     })}`}
-                    className={`px-5 py-3 rounded-xl border-2 font-semibold transition-all duration-200 min-w-[44px] ${
+                    className={`px-3 sm:px-4 md:px-5 py-2 sm:py-3 rounded-xl border-2 font-semibold transition-all duration-200 min-w-[40px] sm:min-w-[44px] text-sm sm:text-base ${
                       pageNum === page
                         ? 'gradient-purple text-white shadow-glow border-primary-600'
                         : 'bg-white text-gray-700 hover:bg-purple-50 hover:border-primary-300 hover:text-primary-700 border-purple-200'
@@ -178,7 +178,7 @@ export default function HomePageContent({
                   ),
                   page: String(Math.min(totalPages, page + 1)),
                 })}`}
-                className={`px-6 py-3 rounded-xl border-2 font-medium transition-all duration-200 ${
+                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl border-2 font-medium transition-all duration-200 text-sm sm:text-base ${
                   page === totalPages
                     ? 'bg-gray-50 text-gray-400 cursor-not-allowed pointer-events-none border-gray-200'
                     : 'bg-white text-gray-700 hover:bg-purple-50 hover:border-primary-300 hover:text-primary-700 border-purple-200'

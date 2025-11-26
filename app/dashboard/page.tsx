@@ -160,13 +160,13 @@ function DashboardContent() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* Header */}
-      <div className="mb-8 animate-fade-in">
-        <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 bg-clip-text text-transparent">
+      <div className="mb-6 sm:mb-8 animate-fade-in">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 bg-clip-text text-transparent">
           {t('dashboard.title')}
         </h1>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 text-base sm:text-lg">
           {t('common.welcome')}, <span className="font-semibold text-gray-900">{profile?.full_name?.trim() || t('common.user')}</span>
         </p>
         {error && (
@@ -186,72 +186,72 @@ function DashboardContent() {
       </div>
 
       {/* สถิติ */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-soft border border-purple-100 hover-lift transition-all duration-300">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-soft border border-purple-100 hover-lift transition-all duration-300">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">{t('common.totalListings')}</p>
-              <p className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate">{t('common.totalListings')}</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
                 {listings.length}
               </p>
             </div>
-            <div className="bg-gradient-to-br from-primary-100 to-purple-100 p-3 rounded-xl">
-              <Eye className="w-6 h-6 text-primary-600" />
+            <div className="bg-gradient-to-br from-primary-100 to-purple-100 p-2 sm:p-3 rounded-lg sm:rounded-xl ml-2 flex-shrink-0">
+              <Eye className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-primary-600" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-soft border border-purple-100 hover-lift transition-all duration-300">
+        <div className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-soft border border-purple-100 hover-lift transition-all duration-300">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">{t('common.totalViews')}</p>
-              <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate">{t('common.totalViews')}</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 {totalViews}
               </p>
             </div>
-            <div className="bg-gradient-to-br from-blue-100 to-cyan-100 p-3 rounded-xl">
-              <Eye className="w-6 h-6 text-blue-600" />
+            <div className="bg-gradient-to-br from-blue-100 to-cyan-100 p-2 sm:p-3 rounded-lg sm:rounded-xl ml-2 flex-shrink-0">
+              <Eye className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-600" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-soft border border-purple-100 hover-lift transition-all duration-300">
+        <div className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-soft border border-purple-100 hover-lift transition-all duration-300">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">{t('common.featuredListings')}</p>
-              <p className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate">{t('common.featuredListings')}</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
                 {featuredCount}
               </p>
             </div>
-            <div className="bg-gradient-to-br from-yellow-100 to-orange-100 p-3 rounded-xl">
-              <Eye className="w-6 h-6 text-yellow-600" />
+            <div className="bg-gradient-to-br from-yellow-100 to-orange-100 p-2 sm:p-3 rounded-lg sm:rounded-xl ml-2 flex-shrink-0">
+              <Eye className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-600" />
             </div>
           </div>
         </div>
 
         <Link
           href="/listings/new"
-          className="gradient-purple text-white p-6 rounded-2xl shadow-soft hover:shadow-glow transition-all duration-300 hover-lift flex items-center justify-center space-x-2 border border-primary-600"
+          className="gradient-purple text-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-soft hover:shadow-glow transition-all duration-300 hover-lift flex items-center justify-center space-x-2 border border-primary-600 col-span-2 lg:col-span-1"
         >
-          <Plus className="w-6 h-6" />
-          <span className="font-semibold">{t('dashboard.newListing')}</span>
+          <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="font-semibold text-sm sm:text-base">{t('dashboard.newListing')}</span>
         </Link>
       </div>
 
       {/* ฟิลเตอร์และค้นหา */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-soft p-6 mb-6 border border-purple-100">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 mb-4 sm:mb-6 border border-purple-100">
         <DashboardFilters />
       </div>
 
       {/* รายการประกาศ */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-soft p-6 border border-purple-100">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-purple-100">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
             {t('common.myListings')} <span className="text-primary-600">({listings.length})</span>
           </h2>
-          <div className="flex items-center space-x-4 text-sm text-gray-600 bg-purple-50 px-4 py-2 rounded-xl">
+          <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm text-gray-600 bg-purple-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl">
             <span className="font-medium">{t('common.sale')}: <span className="text-primary-700 font-bold">{saleCount}</span></span>
-            <span className="text-purple-300">•</span>
+            <span className="text-purple-300 hidden sm:inline">•</span>
             <span className="font-medium">{t('common.rent')}: <span className="text-primary-700 font-bold">{rentCount}</span></span>
           </div>
         </div>

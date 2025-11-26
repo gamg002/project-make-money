@@ -192,10 +192,10 @@ export default function DashboardListingCard({ listing, onDelete }: DashboardLis
     : null
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-soft overflow-hidden hover:shadow-glow transition-all duration-300 border border-purple-100 hover-lift">
-      <div className="flex flex-col md:flex-row">
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-soft overflow-hidden hover:shadow-glow transition-all duration-300 border border-purple-100 hover-lift">
+      <div className="flex flex-col sm:flex-row">
         {/* รูปภาพ */}
-        <div className="relative w-full md:w-48 h-48 md:h-auto bg-gray-200 flex-shrink-0">
+        <div className="relative w-full sm:w-48 h-48 sm:h-auto bg-gray-200 flex-shrink-0">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -225,22 +225,22 @@ export default function DashboardListingCard({ listing, onDelete }: DashboardLis
         </div>
 
         {/* เนื้อหา */}
-        <div className="flex-1 p-4 flex flex-col">
-          <div className="flex items-start justify-between mb-2">
-            <div className="flex-1">
+        <div className="flex-1 p-3 sm:p-4 flex flex-col">
+          <div className="flex items-start justify-between mb-2 gap-2">
+            <div className="flex-1 min-w-0">
               <Link href={`/listings/${listing.id}`}>
-                <h3 className="font-semibold text-gray-900 text-lg hover:text-primary-600 transition-colors mb-1">
+                <h3 className="font-semibold text-gray-900 text-base sm:text-lg hover:text-primary-600 transition-colors mb-1 line-clamp-2">
                   {listing.title}
                 </h3>
               </Link>
-              <div className="flex items-center text-gray-600 text-sm mb-2">
-                <MapPin className="w-4 h-4 mr-1" />
-                <span>{listing.district}, {listing.province}</span>
+              <div className="flex items-center text-gray-600 text-xs sm:text-sm mb-2">
+                <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
+                <span className="truncate">{listing.district}, {listing.province}</span>
               </div>
             </div>
 
             {/* เมนู */}
-            <div className="relative ml-4">
+            <div className="relative ml-2 sm:ml-4 flex-shrink-0">
               <button
                 onClick={() => setShowMenu(!showMenu)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -295,29 +295,29 @@ export default function DashboardListingCard({ listing, onDelete }: DashboardLis
           </div>
 
           <div className="flex-1">
-            <div className="text-2xl font-bold text-primary-600 mb-3">
+            <div className="text-xl sm:text-2xl font-bold text-primary-600 mb-2 sm:mb-3">
               {formatPrice(listing.price)} {t('listing.baht')}
               {listing.transaction_type === 'rent' && (
-                <span className="text-sm font-normal text-gray-500">{t('listing.perMonth')}</span>
+                <span className="text-xs sm:text-sm font-normal text-gray-500">{t('listing.perMonth')}</span>
               )}
             </div>
 
-            <div className="flex items-center space-x-4 text-gray-600 text-sm mb-3">
+            <div className="flex items-center flex-wrap gap-2 sm:gap-3 sm:space-x-4 text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3">
               {listing.bedrooms && (
                 <div className="flex items-center">
-                  <Bed className="w-4 h-4 mr-1" />
+                  <Bed className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
                   <span>{listing.bedrooms} {t('detail.bedrooms')}</span>
                 </div>
               )}
               {listing.bathrooms && (
                 <div className="flex items-center">
-                  <Bath className="w-4 h-4 mr-1" />
+                  <Bath className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
                   <span>{listing.bathrooms} {t('detail.bathrooms')}</span>
                 </div>
               )}
               {listing.area_sqm && (
                 <div className="flex items-center">
-                  <Square className="w-4 h-4 mr-1" />
+                  <Square className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
                   <span>{listing.area_sqm} {t('listing.sqm')}</span>
                 </div>
               )}
@@ -325,14 +325,14 @@ export default function DashboardListingCard({ listing, onDelete }: DashboardLis
           </div>
 
           {/* ข้อมูลด้านล่าง */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-            <div className="flex items-center space-x-4 text-xs text-gray-500">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-2 sm:pt-3 border-t border-gray-200 gap-2">
+            <div className="flex items-center space-x-2 sm:space-x-4 text-xs text-gray-500">
               <span>{getPropertyTypeLabel(listing.property_type)}</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>{format(new Date(listing.created_at), 'dd MMM yyyy')}</span>
             </div>
             <div className="flex items-center space-x-1 text-xs text-gray-500">
-              <Eye className="w-4 h-4" />
+              <Eye className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
               <span>{listing.views || 0} {t('detail.views')}</span>
             </div>
           </div>
