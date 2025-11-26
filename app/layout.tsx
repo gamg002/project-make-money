@@ -19,19 +19,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID
+  // ใช้ client ID จาก environment variable หรือใช้ค่า default
+  const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || 'ca-pub-7897056302180263'
 
   return (
     <html lang="th">
       <head>
-        {adClient && (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}
-            crossOrigin="anonymous"
-            strategy="lazyOnload"
-          />
-        )}
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </head>
       <body className={inter.className}>
         <LanguageProvider>

@@ -28,24 +28,8 @@ export default function AdSense({
   className = '',
   fullWidthResponsive = true,
 }: AdSenseProps) {
-  const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID
-
-  // ถ้ายังไม่มี AdSense Client ID ให้แสดง placeholder
-  if (!adClient) {
-    return (
-      <div
-        className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center ${className}`}
-        style={{ minHeight: '100px', ...style }}
-      >
-        <div className="text-center p-4">
-          <p className="text-sm text-gray-500 mb-2">โฆษณา</p>
-          <p className="text-xs text-gray-400">
-            ตั้งค่า NEXT_PUBLIC_ADSENSE_CLIENT_ID ใน .env.local
-          </p>
-        </div>
-      </div>
-    )
-  }
+  // ใช้ client ID จาก environment variable หรือใช้ค่า default
+  const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || 'ca-pub-7897056302180263'
 
   return (
     <>
