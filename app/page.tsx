@@ -10,6 +10,18 @@ function isSupabaseConfigured(): boolean {
   return !!(url && key && !url.includes('your-project') && !key.includes('your-key'))
 }
 
+interface AdvertisementRow {
+  id: string
+  image_url: string
+  link_url: string
+  title: string | null
+  subtitle: string | null
+  is_active: boolean
+  display_order: number
+  created_at: string
+  updated_at: string
+}
+
 async function getAdvertisements() {
   if (!isSupabaseConfigured()) {
     return []
@@ -29,7 +41,7 @@ async function getAdvertisements() {
       return []
     }
 
-    return (data || []).map((ad) => ({
+    return (data || []).map((ad: AdvertisementRow) => ({
       id: ad.id,
       image: ad.image_url,
       link: ad.link_url,
