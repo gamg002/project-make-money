@@ -1,0 +1,21 @@
+name: Cleanup Expired Listings
+
+on:
+  schedule:
+    # ทุกวันเวลา 00:00 UTC (07:00 เวลาไทย)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # อนุญาตให้รัน manual จาก GitHub Actions tab
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Cleanup API
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          API_URL: ${{ secrets.API_URL || 'https://your-domain.com/api/listings/cleanup' }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            $API_URL

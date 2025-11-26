@@ -1,0 +1,50 @@
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import Script from 'next/script'
+import './globals.css'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { LanguageProvider } from '@/contexts/LanguageContext'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'ประกาศขาย-เช่าอสังหาริมทรัพย์',
+  description: 'เว็บไซต์ประกาศขายและเช่าคอนโด บ้าน ที่ดิน',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID
+
+  return (
+    <html lang="th">
+      <head>
+        {adClient && (
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}
+            crossOrigin="anonymous"
+            strategy="lazyOnload"
+          />
+        )}
+      </head>
+      <body className={inter.className}>
+        <LanguageProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </AuthProvider>
+        </LanguageProvider>
+      </body>
+    </html>
+  )
+}
+
