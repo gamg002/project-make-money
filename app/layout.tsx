@@ -25,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="th">
       <head>
+        {/* Google AdSense Script - ต้องอยู่ใน head tag สำหรับการยืนยัน */}
         <Script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}
