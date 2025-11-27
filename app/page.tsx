@@ -114,7 +114,92 @@ async function getListings(
   }
 
   if (filters.search) {
-    query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,address.ilike.%${filters.search}%`)
+    const searchTerm = filters.search.replace(/'/g, "''") // escape single quotes
+    
+    // ค้นหาจาก title, description, address, contact_name และชื่อ user (full_name จาก profiles)
+    // ขั้นแรก: ค้นหา user_id ที่มี full_name ตรงกับ search term
+    const { data: matchingUsers } = await supabase
+      .from('profiles')
+      .select('id')
+      .ilike('full_name', `%${searchTerm}%`)
+    
+    const userIds = (matchingUsers || []).map((u: { id: string }) => u.id)
+    
+    // สร้าง search conditions สำหรับ listings fields
+    const searchConditions = [
+      `title.ilike.%${searchTerm}%`,
+      `description.ilike.%${searchTerm}%`,
+      `address.ilike.%${searchTerm}%`,
+      `contact_name.ilike.%${searchTerm}%`
+    ]
+    
+    // ถ้ามี user ที่ตรงกับ search term ให้ค้นหาจาก user_id ด้วย
+    if (userIds.length > 0) {
+      // สร้าง base query ที่มี filters อื่นๆ แล้ว
+      let baseQuery = supabase
+        .from('listings')
+        .select('*', { count: 'exact' })
+      
+      // Apply filters อื่นๆ
+      if (filters.property_type) {
+        baseQuery = baseQuery.eq('property_type', filters.property_type)
+      }
+      if (filters.transaction_type) {
+        baseQuery = baseQuery.eq('transaction_type', filters.transaction_type)
+      }
+      if (filters.min_price) {
+        baseQuery = baseQuery.gte('price', filters.min_price)
+      }
+      if (filters.max_price) {
+        baseQuery = baseQuery.lte('price', filters.max_price)
+      }
+      if (filters.bedrooms) {
+        baseQuery = baseQuery.eq('bedrooms', filters.bedrooms)
+      }
+      if (filters.province) {
+        baseQuery = baseQuery.eq('province', filters.province)
+      }
+      if (filters.district) {
+        baseQuery = baseQuery.eq('district', filters.district)
+      }
+      
+      // ดึงข้อมูลที่ตรงกับ search conditions
+      const { data: listingsByFields, error: fieldsError } = await baseQuery.or(searchConditions.join(','))
+      
+      if (fieldsError) {
+        console.error('Error fetching listings by fields:', fieldsError)
+      }
+      
+      // ดึงข้อมูลที่ user_id ตรงกับ search term (พร้อม filters อื่นๆ)
+      const { data: listingsByUser, error: userError } = await baseQuery.in('user_id', userIds)
+      
+      if (userError) {
+        console.error('Error fetching listings by user:', userError)
+      }
+      
+      // รวมผลลัพธ์และลบ duplicates
+      const allListings = [
+        ...(listingsByFields || []),
+        ...(listingsByUser || [])
+      ]
+      const uniqueListings = Array.from(
+        new Map(allListings.map((item: any) => [item.id, item])).values()
+      ) as Listing[]
+      
+      // Sort และ paginate
+      uniqueListings.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      const paginated = uniqueListings.slice(offset, offset + limit)
+      
+      return {
+        listings: paginated,
+        total: uniqueListings.length,
+        page,
+        limit,
+      }
+    } else {
+      // ไม่มี user ที่ตรงกับ search term ใช้ search ปกติ
+      query = query.or(searchConditions.join(','))
+    }
   }
 
   const { data, error, count } = await query

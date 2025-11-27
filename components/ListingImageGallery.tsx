@@ -34,25 +34,27 @@ export default function ListingImageGallery({ images, title }: ListingImageGalle
     <>
       <div className="flex flex-col lg:flex-row gap-2 sm:gap-3 bg-gray-50 p-2 sm:p-3 lg:p-4">
         {/* รูปภาพหลัก */}
-        <div className="relative w-full lg:flex-1 h-64 sm:h-80 md:h-96 lg:h-[500px] bg-gray-200 rounded-lg sm:rounded-xl overflow-hidden group cursor-pointer">
+        <div 
+          className="relative w-full lg:flex-1 h-64 sm:h-80 md:h-96 lg:h-[500px] bg-gray-200 rounded-lg sm:rounded-xl overflow-hidden group cursor-pointer"
+          onClick={() => handleImageClick(0)}
+        >
           <Image
             src={mainImage}
             alt={title}
             fill
-            className="object-cover"
+            className="object-cover pointer-events-none"
             priority
-            onClick={() => handleImageClick(0)}
             sizes="(max-width: 1024px) 100vw, 70vw"
           />
           {/* Overlay with zoom icon */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center pointer-events-none">
             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <ZoomIn className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" />
             </div>
           </div>
           {/* Image count badge - ย้ายไปด้านล่างซ้าย */}
           {images.length > 1 && (
-            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-black bg-opacity-70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm">
+            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-black bg-opacity-70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm pointer-events-none">
               {images.length} รูป
             </div>
           )}

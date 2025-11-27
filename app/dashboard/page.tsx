@@ -65,7 +65,8 @@ function DashboardContent() {
         }
 
         if (search) {
-          query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,address.ilike.%${search}%`)
+          // ค้นหาจาก title, description, address และ contact_name
+          query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,address.ilike.%${search}%,contact_name.ilike.%${search}%`)
         }
 
         const { data: listingsData, error: listingsError } = await query
@@ -121,7 +122,8 @@ function DashboardContent() {
       }
 
       if (search) {
-        query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,address.ilike.%${search}%`)
+        // ค้นหาจาก title, description, address และ contact_name
+        query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,address.ilike.%${search}%,contact_name.ilike.%${search}%`)
       }
 
       const { data: listingsData, error: listingsError } = await query
