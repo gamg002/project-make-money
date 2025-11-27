@@ -23,6 +23,7 @@ const translations: Record<Language, Record<string, string>> = {
   th: {
     // Navbar
     'nav.home': 'หน้าหลัก',
+    'nav.new': 'ลงประกาศ',
     'nav.newListing': 'ลงประกาศ',
     'nav.dashboard': 'แดชบอร์ด',
     'nav.settings': 'ตั้งค่าบัญชี',
@@ -341,6 +342,7 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Navbar
     'nav.home': 'Home',
+    'nav.new': 'New',
     'nav.newListing': 'New Listing',
     'nav.dashboard': 'Dashboard',
     'nav.settings': 'Account Settings',
@@ -627,6 +629,24 @@ const translations: Record<Language, Record<string, string>> = {
     'editListing.notFound': 'Listing Not Found',
     'editListing.notFoundOrNoPermission': 'Listing not found or you do not have permission to edit',
     'editListing.loadError': 'Error loading data',
+    
+    // Listing Actions
+    'actions.edit': 'Edit',
+    'actions.delete': 'Delete',
+    'actions.dashboard': 'Dashboard',
+    'actions.deleteConfirm': 'Confirm Delete',
+    'actions.deleteConfirmMessage': 'Are you sure you want to delete this listing? This action cannot be undone',
+    'actions.deleteSuccess': 'Deleted Successfully',
+    'actions.deleteSuccessMessage': 'Listing has been deleted',
+    'actions.deleteError': 'Error',
+    'actions.deleteErrorMessage': 'Unable to delete listing. Please try again',
+    
+    // Modal
+    'modal.close': 'Close',
+    'modal.confirm': 'Confirm',
+    'modal.cancel': 'Cancel',
+    'modal.ok': 'OK',
+    'modal.processing': 'Processing...',
     
     // Property types
     'property.condo': 'Condo',
