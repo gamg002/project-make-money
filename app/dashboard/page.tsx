@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardListingCard from '@/components/DashboardListingCard'
+import NotificationBanner from '@/components/NotificationBanner'
 import { Plus, Eye } from 'lucide-react'
 import { Listing } from '@/lib/types'
 import DashboardFilters from '@/components/DashboardFilters'
@@ -20,6 +21,26 @@ function DashboardContent() {
   const [listings, setListings] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [notification, setNotification] = useState<{
+    isOpen: boolean
+    title: string
+    message?: string
+    type: 'success' | 'error' | 'warning' | 'info'
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+  })
+
+  const handleNotification = useCallback((title: string, message?: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    setNotification({
+      isOpen: true,
+      title,
+      message,
+      type,
+    })
+  }, [])
 
   useEffect(() => {
     // ถ้ายัง loading auth ให้รอ
@@ -163,6 +184,16 @@ function DashboardContent() {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      {/* Notification Banner - แสดงบนหน้าเว็บ */}
+      <NotificationBanner
+        isOpen={notification.isOpen}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        duration={5000}
+      />
+      
       {/* Header */}
       <div className="mb-6 sm:mb-8 animate-fade-in">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 bg-clip-text text-transparent">
@@ -289,6 +320,7 @@ function DashboardContent() {
                     // Refresh ข้อมูล listings หลังลบ (ไม่ refresh profile)
                     await refreshListings()
                   }}
+                  onNotification={handleNotification}
                 />
               </div>
             ))}

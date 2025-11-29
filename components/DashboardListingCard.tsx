@@ -13,10 +13,11 @@ import { useLanguage } from '@/contexts/LanguageContext'
 
 interface DashboardListingCardProps {
   listing: Listing
-  onDelete?: () => void
+  onDelete?: () => void | Promise<void>
+  onNotification?: (title: string, message?: string, type?: 'success' | 'error' | 'warning' | 'info') => void
 }
 
-export default function DashboardListingCard({ listing, onDelete }: DashboardListingCardProps) {
+export default function DashboardListingCard({ listing, onDelete, onNotification }: DashboardListingCardProps) {
   const router = useRouter()
   const supabase = createClient()
   const { t } = useLanguage()
@@ -152,19 +153,35 @@ export default function DashboardListingCard({ listing, onDelete }: DashboardLis
         .eq('user_id', user.id) // ตรวจสอบว่าเป็นเจ้าของ
 
       if (error) {
-        setAlertMessage({
-          title: t('dashboard.errorMessage'),
-          message: error.message,
-          type: 'error',
-        })
-        setShowAlert(true)
+        // แสดง notification บนหน้าเว็บแทน AlertDialog
+        if (onNotification) {
+          onNotification(t('dashboard.errorMessage'), error.message, 'error')
+        } else {
+          // Fallback: ใช้ AlertDialog ถ้าไม่มี callback
+          setAlertMessage({
+            title: t('dashboard.errorMessage'),
+            message: error.message,
+            type: 'error',
+          })
+          setShowAlert(true)
+        }
       } else {
-        setAlertMessage({
-          title: t('dashboard.toggleFeaturedSuccess'),
-          message: t('dashboard.toggleFeaturedSuccessMessage'),
-          type: 'success',
-        })
-        setShowAlert(true)
+        // แสดง notification บนหน้าเว็บแทน AlertDialog สำหรับ featured toggle
+        if (onNotification) {
+          onNotification(
+            t('dashboard.toggleFeaturedSuccess'),
+            t('dashboard.toggleFeaturedSuccessMessage'),
+            'success'
+          )
+        } else {
+          // Fallback: ใช้ AlertDialog ถ้าไม่มี callback
+          setAlertMessage({
+            title: t('dashboard.toggleFeaturedSuccess'),
+            message: t('dashboard.toggleFeaturedSuccessMessage'),
+            type: 'success',
+          })
+          setShowAlert(true)
+        }
         
         // เรียก callback เพื่อ refresh listings (ไม่ refresh profile)
         if (onDelete) {
