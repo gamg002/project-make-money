@@ -101,6 +101,11 @@ function SignUpForm() {
     }
 
     try {
+      // สร้าง redirect URL สำหรับ email confirmation
+      const redirectUrl = typeof window !== 'undefined' 
+        ? `${window.location.origin}/auth/callback?next=/dashboard`
+        : '/auth/callback?next=/dashboard'
+
       const { data, error } = await supabase.auth.signUp({
         email: formData.email.trim(),
         password: formData.password,
@@ -108,6 +113,7 @@ function SignUpForm() {
           data: {
             full_name: formData.full_name.trim(),
           },
+          emailRedirectTo: redirectUrl,
         },
       })
 
@@ -142,6 +148,27 @@ function SignUpForm() {
         
         if (hasConfirmationSent) {
           // Email confirmation ถูกส่งแล้ว - แสดงข้อความสำเร็จ
+          // สร้าง profile เป็น fallback ถ้า trigger ไม่ทำงาน
+          try {
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert({
+                id: data.user.id,
+                email: data.user.email || formData.email,
+                full_name: formData.full_name.trim(),
+              })
+              .select()
+              .single()
+            
+            if (profileError && profileError.code !== '23505') { // 23505 = duplicate key (มี profile อยู่แล้ว)
+              console.warn('Failed to create profile:', profileError)
+              // ไม่ต้องแสดง error เพราะ user ถูกสร้างแล้ว และ trigger อาจจะสร้าง profile ให้แล้ว
+            }
+          } catch (err) {
+            console.warn('Error creating profile:', err)
+            // ไม่ต้องแสดง error เพราะ user ถูกสร้างแล้ว
+          }
+          
           setSuccess(t('auth.emailConfirmationSent') || 'กรุณาตรวจสอบอีเมลของคุณเพื่อยืนยันบัญชี')
           setLoading(false)
           setIsVerifying(false)
@@ -169,6 +196,25 @@ function SignUpForm() {
           } else {
             // ถ้ายังไม่มี session และไม่มี confirmation_sent_at 
             // อาจเป็นเพราะ email confirmation ถูกเปิดใช้งาน
+            // สร้าง profile เป็น fallback ถ้า trigger ไม่ทำงาน
+            try {
+              const { error: profileError } = await supabase
+                .from('profiles')
+                .insert({
+                  id: data.user.id,
+                  email: data.user.email || formData.email,
+                  full_name: formData.full_name.trim(),
+                })
+                .select()
+                .single()
+              
+              if (profileError && profileError.code !== '23505') { // 23505 = duplicate key
+                console.warn('Failed to create profile:', profileError)
+              }
+            } catch (err) {
+              console.warn('Error creating profile:', err)
+            }
+            
             // แสดงข้อความสำเร็จแทน error
             setSuccess(t('auth.emailConfirmationSent') || 'กรุณาตรวจสอบอีเมลของคุณเพื่อยืนยันบัญชี')
             setLoading(false)
