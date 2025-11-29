@@ -20,17 +20,24 @@ async function getListing(id: string) {
     return null
   }
 
-  // อัปเดตจำนวน views (ไม่ await เพื่อไม่ให้ช้า)
+  // อัปเดตจำนวน views โดยใช้ database function (bypass RLS)
+  // ไม่ await เพื่อไม่ให้ช้า แต่ต้อง handle error
   supabase
-    .from('listings')
-    .update({ views: (listingData.views || 0) + 1 })
-    .eq('id', id)
+    .rpc('increment_listing_views', { listing_id: id })
     .then(() => {
       // อัปเดตสำเร็จ (ไม่ต้องทำอะไร)
     })
     .catch((err: unknown) => {
       // Log error แต่ไม่ block การแสดงหน้า
+      // ถ้า function ยังไม่มี ให้ fallback ไปใช้วิธีเดิม
       console.error('Error updating views:', err)
+      // Fallback: ลองใช้วิธีเดิม (อาจไม่ทำงานถ้าไม่มีสิทธิ์)
+      supabase
+        .from('listings')
+        .update({ views: (listingData.views || 0) + 1 })
+        .eq('id', id)
+        .then(() => {})
+        .catch(() => {})
     })
 
   return { listing: listingData, isOwner: user?.id === listingData.user_id }
