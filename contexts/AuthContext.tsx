@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useMemo, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef, ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User, Session } from '@supabase/supabase-js'
 
@@ -19,9 +19,11 @@ interface AuthContextType {
   session: Session | null
   profile: Profile | null
   loading: boolean
+  profileError: string | null
   signOut: () => Promise<void>
   refreshProfile: () => Promise<Profile | null>
   updateProfile: (updates: Partial<Profile>) => Promise<boolean>
+  clearProfileError: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -29,9 +31,11 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   profile: null,
   loading: true,
+  profileError: null,
   signOut: async () => {},
   refreshProfile: async () => null,
   updateProfile: async () => false,
+  clearProfileError: () => {},
 })
 
 // Helper functions สำหรับ localStorage
@@ -88,9 +92,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [profileError, setProfileError] = useState<string | null>(null)
+  const [hasProfileError, setHasProfileError] = useState(false) // ป้องกันการ retry
   
   // ใช้ useMemo เพื่อไม่ให้สร้าง client ใหม่ทุกครั้ง
   const supabase = useMemo(() => createClient(), [])
+  
+  // ใช้ ref เพื่อเก็บ user id ก่อนหน้า สำหรับตรวจสอบการเปลี่ยนแปลง
+  const previousUserIdRef = useRef<string | null>(null)
 
   const fetchProfile = useCallback(async (userId: string, userEmail?: string, forceSync = false) => {
     try {
@@ -213,6 +222,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setSession(session)
           setUser(session.user)
           
+          // Reset error state เมื่อมี session ใหม่ (user อาจเปลี่ยน)
+          setProfileError(null)
+          setHasProfileError(false)
+          
           // ลองโหลด profile จาก cache ก่อน
           const cachedProfile = getCachedProfile(session.user.id)
           if (cachedProfile) {
@@ -235,22 +248,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
             setProfile(profileData)
             setCachedProfile(profileData)
+            setProfileError(null) // Clear error ถ้าโหลดสำเร็จ
+            setHasProfileError(false)
             console.log('AuthContext - Profile loaded and cached:', profileData.full_name)
           } catch (err) {
             console.error('AuthContext - Failed to load profile:', err)
-            // ลบข้อมูลเก่าและ sign out
-            await supabase.auth.signOut()
-            setUser(null)
-            setSession(null)
-            setProfile(null)
-            setCachedProfile(null)
-            // Redirect ไปหน้า login
-            if (typeof window !== 'undefined') {
-              window.location.href = '/auth/signin'
-            }
+            // ตั้งค่า error state แทนการ redirect อัตโนมัติ
+            setProfileError('ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาเข้าสู่ระบบอีกครั้ง')
+            setHasProfileError(true)
+            setLoading(false)
           }
         } else {
           console.log('AuthContext - No session found')
+          // Reset error state เมื่อไม่มี session
+          setProfileError(null)
+          setHasProfileError(false)
           // ลบ cache เมื่อไม่มี session
           setCachedProfile(null)
         }
@@ -271,6 +283,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
       console.log('Auth state changed:', event, session?.user?.id)
       
+      const currentUserId = session?.user?.id ?? null
+      const previousUserId = previousUserIdRef.current
+      
+      // Reset error state เมื่อ user เปลี่ยน (SIGNED_IN, SIGNED_OUT, หรือ user id เปลี่ยน)
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || (currentUserId !== previousUserId)) {
+        setProfileError(null)
+        setHasProfileError(false)
+      }
+      
+      // อัปเดต ref
+      previousUserIdRef.current = currentUserId
+      
       setSession(session)
       setUser(session?.user ?? null)
 
@@ -289,6 +313,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (freshProfile) {
                   setProfile(freshProfile)
                   setCachedProfile(freshProfile)
+                  setProfileError(null)
+                  setHasProfileError(false)
                   console.log('AuthContext - Profile updated:', freshProfile.full_name)
                 } else {
                   throw new Error('ไม่พบข้อมูลผู้ใช้')
@@ -296,16 +322,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               })
               .catch(async (err) => {
                 console.error('AuthContext - Failed to update profile:', err)
-                // ลบข้อมูลเก่าและ sign out
-                await supabase.auth.signOut()
-                setUser(null)
-                setSession(null)
-                setProfile(null)
-                setCachedProfile(null)
-                // Redirect ไปหน้า login
-                if (typeof window !== 'undefined') {
-                  window.location.href = '/auth/signin'
-                }
+                // ตั้งค่า error state เฉพาะเมื่อเป็น error จริงๆ
+                setProfileError('ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาเข้าสู่ระบบอีกครั้ง')
+                setHasProfileError(true)
+                setLoading(false)
               })
           }
           setLoading(false)
@@ -325,24 +345,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
             setProfile(profileData)
             setCachedProfile(profileData)
+            setProfileError(null)
+            setHasProfileError(false)
             console.log('AuthContext - Profile loaded and cached:', profileData.full_name)
           } catch (err) {
             console.error('AuthContext - Failed to load profile:', err)
-            // ลบข้อมูลเก่าและ sign out
-            await supabase.auth.signOut()
-            setUser(null)
-            setSession(null)
-            setProfile(null)
-            setCachedProfile(null)
-            // Redirect ไปหน้า login
-            if (typeof window !== 'undefined') {
-              window.location.href = '/auth/signin'
-            }
+            // ตั้งค่า error state แทนการ redirect อัตโนมัติ
+            setProfileError('ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาเข้าสู่ระบบอีกครั้ง')
+            setHasProfileError(true)
+            setLoading(false)
           }
         }
         // ถ้าเป็น TOKEN_REFRESHED หรือ events อื่นๆ และไม่มี cache ให้ fetch
+        // Reset error state เพื่อให้สามารถ retry ได้
         else if (event === 'TOKEN_REFRESHED' || !profile) {
           console.log('AuthContext - Fetching profile for event:', event, '(no cache)')
+          // Reset error state เพื่อให้สามารถ retry ได้
+          if (event === 'TOKEN_REFRESHED') {
+            setProfileError(null)
+            setHasProfileError(false)
+          }
           try {
             const profileData = await fetchProfile(session.user.id, session.user.email, false)
             if (!profileData) {
@@ -350,21 +372,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
             setProfile(profileData)
             setCachedProfile(profileData)
+            setProfileError(null) // Clear error ถ้าโหลดสำเร็จ
+            setHasProfileError(false)
           } catch (err) {
             console.error('AuthContext - Failed to load profile:', err)
-            // ลบข้อมูลเก่าและ sign out
-            await supabase.auth.signOut()
-            setUser(null)
-            setSession(null)
-            setProfile(null)
-            setCachedProfile(null)
-            // Redirect ไปหน้า login
-            if (typeof window !== 'undefined') {
-              window.location.href = '/auth/signin'
+            // ตั้งค่า error state เฉพาะเมื่อยังไม่มี profile
+            if (!profile) {
+              setProfileError('ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาเข้าสู่ระบบอีกครั้ง')
+              setHasProfileError(true)
             }
+            setLoading(false)
           }
         }
       } else {
+        // Reset error state เมื่อไม่มี session
+        setProfileError(null)
+        setHasProfileError(false)
         setProfile(null)
         setCachedProfile(null)
       }
@@ -383,6 +406,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null)
       setSession(null)
       setProfile(null)
+      setProfileError(null)
+      setHasProfileError(false)
       // ลบ profile cache จาก localStorage เมื่อ logout
       if (typeof window !== 'undefined') {
         localStorage.removeItem(PROFILE_STORAGE_KEY)
@@ -397,9 +422,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(PROFILE_STORAGE_KEY)
         localStorage.removeItem(PROFILE_TIMESTAMP_KEY)
       }
+      setProfileError(null)
+      setHasProfileError(false)
       window.location.href = '/'
     }
   }, [supabase])
+
+  const clearProfileError = useCallback(() => {
+    setProfileError(null)
+    setHasProfileError(false)
+  }, [])
 
   const refreshProfile = useCallback(async (force = false) => {
     // ตรวจสอบ user จาก session ถ้ายังไม่มี user
@@ -431,20 +463,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setCachedProfile(profileData)
         console.log('AuthContext - Profile refreshed and cached:', profileData.full_name || profileData.email)
         return profileData
-      } catch (err) {
-        console.error('AuthContext - Failed to refresh profile:', err)
-        // ลบข้อมูลเก่าและ sign out
-        await supabase.auth.signOut()
-        setUser(null)
-        setSession(null)
-        setProfile(null)
-        setCachedProfile(null)
-        // Redirect ไปหน้า login
-        if (typeof window !== 'undefined') {
-          window.location.href = '/auth/signin'
+        } catch (err) {
+          console.error('AuthContext - Failed to refresh profile:', err)
+          // ตั้งค่า error state แทนการ redirect อัตโนมัติ
+          setProfileError('ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาเข้าสู่ระบบอีกครั้ง')
+          setHasProfileError(true)
+          return null
         }
-        return null
-      }
     }
     console.warn('AuthContext - No user found for refreshProfile')
     return null
@@ -486,9 +511,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         profile,
         loading,
+        profileError,
         signOut,
         refreshProfile,
         updateProfile,
+        clearProfileError,
       }}
     >
       {children}

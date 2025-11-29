@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
   // ถ้ามี code ให้ exchange สำหรับ session
   if (code) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!exchangeError) {

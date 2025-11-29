@@ -11,42 +11,30 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function Navbar() {
   const router = useRouter()
-  const { user, profile, loading, signOut } = useAuth()
+  const { user, profile, loading, profileError, signOut, clearProfileError } = useAuth()
   const { language, setLanguage, t } = useLanguage()
   const supabase = createClient()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showLanguageMenu, setShowLanguageMenu] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [showError, setShowError] = useState(false)
-  const [hasShownError, setHasShownError] = useState(false)
   const profileRef = useRef(profile)
 
   // ฟังก์ชันสำหรับลบข้อมูลเก่าและ redirect ไปหน้า login (ทำงานเหมือน logout)
   const handleProfileError = async () => {
     try {
-      // ทำการ logout แบบเต็มรูปแบบเหมือน signOut() ใน AuthContext
-      // แต่ redirect ไปหน้า signin แทนหน้า home
+      // Clear error state ก่อน
+      clearProfileError()
       
-      // 1. ลบ session จาก Supabase (เหมือน signOut() ใน AuthContext)
-      // เมื่อ signOut จาก Supabase แล้ว AuthContext จะ detect ผ่าน onAuthStateChange
-      // และอัปเดต state (user, session, profile) ให้เองอัตโนมัติ
-      await supabase.auth.signOut()
+      // ทำการ logout แบบเต็มรูปแบบ
+      await signOut()
       
-      // 2. ลบ localStorage cache (เหมือน signOut() ใน AuthContext)
-      // ใช้ key เดียวกับ AuthContext: 'realestate_profile' และ 'realestate_profile_timestamp'
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('realestate_profile')
-        localStorage.removeItem('realestate_profile_timestamp')
-      }
-      
-      // 3. Redirect ไปหน้า login (ใช้ window.location.href เพื่อให้แน่ใจว่า cookies ถูกลบ)
-      // AuthContext จะอัปเดต state เองเมื่อ detect ว่า session ถูกลบแล้วผ่าน onAuthStateChange
-      // ดังนั้นเราไม่ต้องเรียก signOut() จาก context เพราะมันจะ redirect ไปหน้า home
+      // Redirect ไปหน้า signin (signOut จะ redirect ไปหน้า home แต่เราต้องการไป signin)
       if (typeof window !== 'undefined') {
         window.location.href = '/auth/signin'
       }
     } catch (err) {
-      console.error('Error clearing data:', err)
+      console.error('Error handling profile error:', err)
       // ถ้ามี error ให้ลบข้อมูลด้วยตนเองและ redirect
       try {
         await supabase.auth.signOut()
@@ -68,31 +56,27 @@ export default function Navbar() {
     profileRef.current = profile
   }, [profile])
 
-  // ตรวจสอบว่ามี user แต่ไม่มี profile (หลังจาก loading เสร็จ)
-  // รอสักครู่เพื่อให้ profile โหลดเสร็จก่อนแสดง error
+  // ตรวจสอบ profile error จาก AuthContext
   useEffect(() => {
-    // ถ้า profile โหลดเสร็จแล้ว ให้ reset error state
-    if (profile && hasShownError) {
-      setHasShownError(false)
-      setShowError(false)
-      return
-    }
-
-    // ถ้ายังไม่มี profile และ loading เสร็จแล้ว ให้รอสักครู่ก่อนแสดง error
-    if (!loading && user && !profile && !hasShownError) {
-      // รอ 3 วินาทีเพื่อให้ profile โหลดเสร็จก่อน (สำหรับกรณีที่ต้อง fetch จาก database)
+    // ถ้ามี profile error หรือมี user แต่ไม่มี profile หลัง loading เสร็จ
+    if (profileError) {
+      // แสดง error dialog ทันที
+      setShowError(true)
+    } else if (!loading && user && !profile) {
+      // ถ้ายังไม่มี profile ให้รอ 3 วินาทีก่อนแสดง error (ให้เวลา profile โหลด)
       const timeoutId = setTimeout(() => {
-        // ตรวจสอบค่าล่าสุดของ profile จาก ref
-        if (!profileRef.current) {
+        if (!profileRef.current && user) {
           console.error('Navbar - User logged in but profile is missing after timeout')
           setShowError(true)
-          setHasShownError(true)
         }
-      }, 3000) // รอ 3 วินาที
+      }, 3000)
 
       return () => clearTimeout(timeoutId)
+    } else if (profile) {
+      // ถ้ามี profile แล้ว ให้ปิด error dialog
+      setShowError(false)
     }
-  }, [user, profile, loading, hasShownError])
+  }, [user, profile, loading, profileError])
 
   // ใช้เฉพาะ profile.full_name เท่านั้น ไม่แสดงอีเมล
   // ถ้าไม่มี profile ให้แสดง null แทน 'ผู้ใช้'
@@ -448,7 +432,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Error Dialog - แสดงเมื่อมี user แต่ไม่มี profile */}
+      {/* Error Dialog - แสดงเมื่อมี profile error */}
       <AlertDialog
         isOpen={showError}
         onClose={async () => {
@@ -456,7 +440,7 @@ export default function Navbar() {
           await handleProfileError()
         }}
         title={t('error.profileMissing')}
-        message={t('error.profileMissingMessage')}
+        message={profileError || t('error.profileMissingMessage')}
         type="error"
         buttonText={t('error.goToLogin')}
       />
