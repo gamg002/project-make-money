@@ -9,23 +9,31 @@ async function getListing(id: string) {
     data: { user },
   } = await supabase.auth.getUser()
   
-  const { data, error } = await supabase
+  // ดึงข้อมูล listing ก่อน
+  const { data: listingData, error: fetchError } = await supabase
     .from('listings')
     .select('*')
     .eq('id', id)
     .single()
 
-  if (error || !data) {
+  if (fetchError || !listingData) {
     return null
   }
 
-  // อัปเดตจำนวน views
-  await supabase
+  // อัปเดตจำนวน views (ไม่ await เพื่อไม่ให้ช้า)
+  supabase
     .from('listings')
-    .update({ views: (data.views || 0) + 1 })
+    .update({ views: (listingData.views || 0) + 1 })
     .eq('id', id)
+    .then(() => {
+      // อัปเดตสำเร็จ (ไม่ต้องทำอะไร)
+    })
+    .catch((err: unknown) => {
+      // Log error แต่ไม่ block การแสดงหน้า
+      console.error('Error updating views:', err)
+    })
 
-  return { listing: data, isOwner: user?.id === data.user_id }
+  return { listing: listingData, isOwner: user?.id === listingData.user_id }
 }
 
 export default async function ListingDetailPage({

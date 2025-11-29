@@ -16,7 +16,7 @@ export default function SearchFilters() {
     min_price: searchParams.get('min_price') || '',
     max_price: searchParams.get('max_price') || '',
     bedrooms: searchParams.get('bedrooms') || '',
-    province: searchParams.get('province') || '',
+    province: searchParams.get('province') || 'ภูเก็ต',
   })
 
   const handleFilterChange = (key: string, value: string) => {
@@ -43,7 +43,7 @@ export default function SearchFilters() {
       min_price: '',
       max_price: '',
       bedrooms: '',
-      province: '',
+      province: 'ภูเก็ต',
     })
     router.push('/')
   }
@@ -89,6 +89,7 @@ export default function SearchFilters() {
           <option value="house">{t('search.house')}</option>
           <option value="land">{t('search.land')}</option>
           <option value="commercial">{t('search.commercial')}</option>
+          <option value="room">{t('search.room')}</option>
         </select>
 
         <input

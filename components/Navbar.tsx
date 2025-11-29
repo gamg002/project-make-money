@@ -292,7 +292,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {showMobileMenu && (
-          <div className="lg:hidden border-t border-purple-100 py-4 animate-fade-in">
+          <div className="lg:hidden border-t border-purple-100 py-4 animate-fade-in relative z-50">
             <div className="flex flex-col space-y-4">
               <Link
                 href="/"
@@ -303,9 +303,10 @@ export default function Navbar() {
               </Link>
 
               {/* Language Selector Mobile */}
-              <div className="relative">
+              <div className="relative z-50">
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation()
                     setShowLanguageMenu(!showLanguageMenu)
                     setShowUserMenu(false)
                   }}
@@ -319,13 +320,14 @@ export default function Navbar() {
                 {showLanguageMenu && (
                   <>
                     <div
-                      className="fixed inset-0 z-30"
+                      className="fixed inset-0 z-[100]"
                       onClick={() => setShowLanguageMenu(false)}
                     />
-                    <div className="mt-2 w-full bg-white rounded-xl shadow-soft border border-purple-100 z-40 overflow-hidden animate-fade-in">
+                    <div className="mt-2 w-full bg-white rounded-xl shadow-soft border border-purple-100 z-[101] relative overflow-hidden animate-fade-in">
                       <div className="py-2">
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation()
                             setLanguage('th')
                             setShowLanguageMenu(false)
                           }}
@@ -340,7 +342,8 @@ export default function Navbar() {
                           {language === 'th' && <span className="ml-auto text-primary-600">✓</span>}
                         </button>
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation()
                             setLanguage('en')
                             setShowLanguageMenu(false)
                           }}

@@ -292,6 +292,7 @@ export default function EditListingForm({ listing }: EditListingFormProps) {
             <option value="house">{t('property.house')}</option>
             <option value="land">{t('property.land')}</option>
             <option value="commercial">{t('property.commercial')}</option>
+            <option value="room">{t('property.room')}</option>
           </select>
         </div>
       </div>

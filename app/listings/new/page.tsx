@@ -39,7 +39,7 @@ export default function NewListingPage() {
     area_sqm: '',
     address: '',
     district: '',
-    province: '',
+    province: 'ภูเก็ต',
     postal_code: '',
     contact_name: '',
     contact_phone: '',
@@ -423,6 +423,7 @@ export default function NewListingPage() {
               <option value="house">{t('search.house')}</option>
               <option value="land">{t('search.land')}</option>
               <option value="commercial">{t('search.commercial')}</option>
+              <option value="room">{t('search.room')}</option>
             </select>
           </div>
         </div>

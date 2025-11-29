@@ -44,7 +44,7 @@ const translations: Record<Language, Record<string, string>> = {
     'error.checkSupabase': 'กรุณาตรวจสอบการตั้งค่า Supabase หรือลองใหม่อีกครั้ง',
     
     // Home page
-    'home.title': 'ค้นหาบ้าน คอนโด ที่ดิน',
+    'home.title': 'ค้นหาบ้าน คอนโด ที่ดิน ภูเก็ต',
     'home.subtitle': 'พบกับอสังหาริมทรัพย์ที่คุณกำลังมองหา',
     'home.noResults': 'ไม่พบรายการที่ค้นหา',
     'home.noResultsDesc': 'ลองปรับเงื่อนไขการค้นหาหรือลองค้นหาด้วยคำอื่น',
@@ -65,6 +65,7 @@ const translations: Record<Language, Record<string, string>> = {
     'search.house': 'บ้าน',
     'search.land': 'ที่ดิน',
     'search.commercial': 'เชิงพาณิชย์',
+    'search.room': 'ห้อง',
     'search.minPrice': 'ราคาต่ำสุด (บาท)',
     'search.maxPrice': 'ราคาสูงสุด (บาท)',
     'search.bedrooms': 'จำนวนห้องนอน',
@@ -276,6 +277,7 @@ const translations: Record<Language, Record<string, string>> = {
     'property.house': 'บ้าน',
     'property.land': 'ที่ดิน',
     'property.commercial': 'เชิงพาณิชย์',
+    'property.room': 'ห้อง',
     
     // Transaction types
     'transaction.sale': 'ขาย',
@@ -363,7 +365,7 @@ const translations: Record<Language, Record<string, string>> = {
     'error.checkSupabase': 'Please check Supabase configuration or try again',
     
     // Home page
-    'home.title': 'Find House, Condo, Land',
+    'home.title': 'Find House, Condo, Land, Phuket',
     'home.subtitle': 'Discover the property you are looking for',
     'home.noResults': 'No listings found',
     'home.noResultsDesc': 'Try adjusting your search filters or search with different keywords',
@@ -384,6 +386,7 @@ const translations: Record<Language, Record<string, string>> = {
     'search.house': 'House',
     'search.land': 'Land',
     'search.commercial': 'Commercial',
+    'search.room': 'Room',
     'search.minPrice': 'Min Price (THB)',
     'search.maxPrice': 'Max Price (THB)',
     'search.bedrooms': 'Bedrooms',
@@ -653,6 +656,7 @@ const translations: Record<Language, Record<string, string>> = {
     'property.house': 'House',
     'property.land': 'Land',
     'property.commercial': 'Commercial',
+    'property.room': 'Room',
     
     // Transaction types
     'transaction.sale': 'Sale',

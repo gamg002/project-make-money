@@ -100,6 +100,7 @@ export default function DashboardFilters() {
           <option value="house">{t('search.house')}</option>
           <option value="land">{t('search.land')}</option>
           <option value="commercial">{t('search.commercial')}</option>
+          <option value="room">{t('search.room')}</option>
         </select>
       </div>
 

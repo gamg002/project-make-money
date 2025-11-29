@@ -3,7 +3,7 @@ export interface Listing {
   title: string
   description: string
   price: number
-  property_type: 'condo' | 'house' | 'land' | 'commercial'
+  property_type: 'condo' | 'house' | 'land' | 'commercial' | 'room'
   transaction_type: 'sale' | 'rent'
   bedrooms?: number
   bathrooms?: number
