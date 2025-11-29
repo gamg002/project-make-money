@@ -206,6 +206,7 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.forgotPassword': 'ลืมรหัสผ่าน?',
     'auth.terms': 'เมื่อสมัครสมาชิก แสดงว่าคุณยอมรับ',
     'auth.termsLink': 'ข้อกำหนดการใช้งาน',
+    'auth.emailConfirmationSent': 'สมัครสมาชิกสำเร็จ! กรุณาตรวจสอบอีเมลของคุณเพื่อยืนยันบัญชี',
     
     // Settings
     'settings.title': 'ตั้งค่าบัญชี',
@@ -527,6 +528,7 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.forgotPassword': 'Forgot Password?',
     'auth.terms': 'By signing up, you agree to our',
     'auth.termsLink': 'Terms of Service',
+    'auth.emailConfirmationSent': 'Sign up successful! Please check your email to confirm your account',
     
     // Settings
     'settings.title': 'Account Settings',

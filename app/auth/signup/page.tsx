@@ -16,6 +16,7 @@ function SignUpForm() {
   const { t } = useLanguage()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
@@ -57,15 +58,55 @@ function SignUpForm() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setSuccess(null)
     setIsVerifying(false)
+
+    // Validation
+    if (!formData.full_name.trim()) {
+      setError(t('auth.fullName') + ' ' + t('common.error') || 'กรุณากรอกชื่อ-นามสกุล')
+      setLoading(false)
+      return
+    }
+
+    if (formData.full_name.trim().length < 2) {
+      setError(t('auth.fullName') + ' ต้องมีอย่างน้อย 2 ตัวอักษร')
+      setLoading(false)
+      return
+    }
+
+    if (!formData.email.trim()) {
+      setError(t('auth.email') + ' ' + t('common.error') || 'กรุณากรอกอีเมล')
+      setLoading(false)
+      return
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      setError('รูปแบบอีเมลไม่ถูกต้อง')
+      setLoading(false)
+      return
+    }
+
+    if (!formData.password) {
+      setError(t('auth.password') + ' ' + t('common.error') || 'กรุณากรอกรหัสผ่าน')
+      setLoading(false)
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setError(t('auth.passwordTooShort'))
+      setLoading(false)
+      return
+    }
 
     try {
       const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
         options: {
           data: {
-            full_name: formData.full_name,
+            full_name: formData.full_name.trim(),
           },
         },
       })
@@ -93,24 +134,52 @@ function SignUpForm() {
         // useEffect จะตรวจสอบ profile และ redirect ให้เอง
         // ไม่ต้องทำอะไรเพิ่มเติมที่นี่
       } else if (data.user && !data.session) {
-        // ถ้ามี user แต่ไม่มี session
-        setError(t('auth.loading'))
-        setIsVerifying(true)
-        setLoading(true)
+        // ถ้ามี user แต่ไม่มี session - อาจเป็นเพราะต้องยืนยันอีเมล
+        // ตรวจสอบว่ามี confirmation_sent_at หรือไม่ (อาจอยู่ใน user object หรือ response)
+        const userWithConfirmation = data.user as any
+        const hasConfirmationSent = userWithConfirmation?.confirmation_sent_at || 
+                                   (data as any)?.confirmation_sent_at
         
-        // รอ session
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        
-        // ตรวจสอบ session อีกครั้ง
-        const { data: { session: newSession } } = await supabase.auth.getSession()
-        if (newSession) {
-          setIsVerifying(true)
-          // รอให้ AuthContext โหลด profile
-          // useEffect จะ redirect ให้เอง
-        } else {
-          setError(t('auth.error'))
+        if (hasConfirmationSent) {
+          // Email confirmation ถูกส่งแล้ว - แสดงข้อความสำเร็จ
+          setSuccess(t('auth.emailConfirmationSent') || 'กรุณาตรวจสอบอีเมลของคุณเพื่อยืนยันบัญชี')
           setLoading(false)
           setIsVerifying(false)
+          // ล้างฟอร์ม
+          setFormData({
+            email: '',
+            password: '',
+            full_name: '',
+          })
+        } else {
+          // ถ้าไม่มี confirmation_sent_at อาจเป็นเพราะ session ยังไม่พร้อม
+          // หรือ email confirmation ไม่ได้เปิดใช้งาน
+          setIsVerifying(true)
+          setLoading(true)
+          
+          // รอ session
+          await new Promise(resolve => setTimeout(resolve, 2000))
+          
+          // ตรวจสอบ session อีกครั้ง
+          const { data: { session: newSession } } = await supabase.auth.getSession()
+          if (newSession) {
+            setIsVerifying(true)
+            // รอให้ AuthContext โหลด profile
+            // useEffect จะ redirect ให้เอง
+          } else {
+            // ถ้ายังไม่มี session และไม่มี confirmation_sent_at 
+            // อาจเป็นเพราะ email confirmation ถูกเปิดใช้งาน
+            // แสดงข้อความสำเร็จแทน error
+            setSuccess(t('auth.emailConfirmationSent') || 'กรุณาตรวจสอบอีเมลของคุณเพื่อยืนยันบัญชี')
+            setLoading(false)
+            setIsVerifying(false)
+            // ล้างฟอร์ม
+            setFormData({
+              email: '',
+              password: '',
+              full_name: '',
+            })
+          }
         }
       }
     } catch (err) {
@@ -146,6 +215,12 @@ function SignUpForm() {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              {success}
             </div>
           )}
 
